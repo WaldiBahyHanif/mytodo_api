@@ -38,6 +38,8 @@ def login():
         if not user or not user.checkPassword(password):
             return response.badRequest([], 'Email atau Password Salah')
         
+        
+        
         # 3. Buat Token (Tiket Masuk)
         data = {
             'id': user.id,
@@ -45,10 +47,12 @@ def login():
             'email': user.email
         }
         
-        # Token akses (berlaku sebentar) & Refresh (berlaku lama)
+        # Token akses & Refresh
         expires = timedelta(days=7)
-        access_token = create_access_token(data, fresh=True, expires_delta=expires)
-        refresh_token = create_refresh_token(data, expires_delta=expires)
+        
+        
+        access_token = create_access_token(identity=str(user.id), fresh=True, expires_delta=expires)
+        refresh_token = create_refresh_token(identity=str(user.id), expires_delta=expires)
         
         return response.success({
             "data": data,
